@@ -54,6 +54,7 @@ ExportedObj/
 
 #Server Settings
 /Assets/server-properties.txt
+/Assets/server-documentation.txt
 
 # Unity3D generated file on crash reports
 sysinfo.txt

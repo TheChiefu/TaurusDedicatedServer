@@ -3,6 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
+/// <summary>
+/// Handles individual client data and sends changes to server.
+/// </summary>
 public class Client
 {
     public static int dataBufferSize = 4096;

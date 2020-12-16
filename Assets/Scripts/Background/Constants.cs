@@ -68,6 +68,8 @@ public class ServerData
     public int maxPlayers { get; set; }
     public int mapID { get; set; }
     public int gamemodeID { get; set; }
+    public string MOTD { get; set; }
+    public string[] Admins { get; set; }    //Initalized to NULL
 
     /// <summary>
     /// ServerData with all default values
@@ -80,89 +82,7 @@ public class ServerData
         this.maxPlayers = 8;
         this.mapID = 0;
         this.gamemodeID = 0;
-    }
-
-    /// <summary>
-    /// ServerData object with default values but custom name
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    public ServerData(string name)
-    {
-        this.name = name;
-        this.description = "Default Taurus Server Description";
-        this.port = 2500;
-        this.maxPlayers = 8;
-        this.mapID = 0;
-        this.gamemodeID = 0;
-    }
-
-    /// <summary>
-    /// ServerData object with default values but custom name and description
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    public ServerData(string name, string description)
-    {
-        this.name = name;
-        this.description = description;
-        this.port = 2500;
-        this.maxPlayers = 8;
-        this.mapID = 0;
-        this.gamemodeID = 0;
-    }
-
-    /// <summary>
-    /// ServerData object with default values but custom name, description, and port
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    /// <param name="port"></param>
-    /// <param name="maxPlayers"></param>
-    public ServerData(string name, string description, int port)
-    {
-        this.name = name;
-        this.description = description;
-        this.port = port;
-        this.maxPlayers = 8;
-        this.mapID = 0;
-        this.gamemodeID = 0;
-    }
-
-    /// <summary>
-    /// ServerData object with default values but custom name, description, port, and max players
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    /// <param name="port"></param>
-    /// <param name="maxPlayers"></param>
-    public ServerData (string name, string description, int port, int maxPlayers)
-    {
-        this.name = name;
-        this.description = description;
-        this.port = port;
-        this.maxPlayers = maxPlayers;
-        this.mapID = 0;
-        this.gamemodeID = 0;
-    }
-
-    /// <summary>
-    /// Fully customizated server data
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    /// <param name="port"></param>
-    /// <param name="maxPlayers"></param>
-    /// <param name="currentMapID"></param>
-    /// <param name="currentGamemode"></param>
-    /// <param name="inRandomOrder"></param>
-    public ServerData(string name, string description, int port, int maxPlayers, int mapID, int currentGamemode)
-    {
-        this.name = name;
-        this.description = description;
-        this.port = port;
-        this.maxPlayers = maxPlayers;
-        this.mapID = mapID;
-        this.gamemodeID = currentGamemode;
+        this.MOTD = "Welcome to the Server! Enjoy your stay.";
+        this.Admins = null;
     }
 }

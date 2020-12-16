@@ -47,7 +47,7 @@ public class NetworkManager : MonoBehaviour
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 120;
 
-        ServerData sd = new ServerData(serverName, serverDescription, port, maxPlayers);
+        ServerData sd = new ServerData();
 
         Server.Start(sd);
     }
