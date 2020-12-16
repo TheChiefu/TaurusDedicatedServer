@@ -1,4 +1,4 @@
-# TaurusDedicatedServer
+# Taurus Dedicated Server
 The Official Taurus Unity Dedicated Server project.
 
 This repo is dedicated to ensuring I don't make any critial mistakes to my codebase and create irreversible damage.
