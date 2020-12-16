@@ -5,3 +5,5 @@ This repo is dedicated to ensuring I don't make any critial mistakes to my codeb
 Just in case I try to "improve" or "speed up" code that ends up breaking many other factors.
 
 Unity Version: 2020.2.0f1
+
+Server Documentation: [Google Drive](https://docs.google.com/document/d/1qzBPc6fzdyAdYlj0ry61qEzGJ3_CK29WAku-2EEkYD4/edit?usp=sharing)
