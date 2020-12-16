@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class Preload : MonoBehaviour
 {
-    public string GlobalFilePath = string.Empty;
+    private string GlobalFilePath = string.Empty;
+    private string[] Properties = new string[] { "Server-Name", "Description", "Server-Port", "Max-Players", "Map-ID", "Gamemode-ID", "Version"};
+    public ServerData GlobalData = new ServerData();
 
     //Load settings on awake
     private void Awake()
@@ -13,133 +15,194 @@ public class Preload : MonoBehaviour
         //HAVE TO DO THIS IN AWAKE
         GlobalFilePath = (Application.dataPath + "/server-properties.txt");
 
-        try
-        {
-            LoadSettings(GlobalFilePath);
-            InterpretProperties(GlobalFilePath);
-        }
-        catch
-        {
-            Debug.LogError("Could not load server settings, maybe the server properties file is corrupted? Or path is inaccessible?");
-        }
-
-        
-    }
-
-    /// <summary>
-    /// Attempt to load server settings from application path, return if result was sucess or not
-    /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    private bool LoadSettings(string path)
-    {
         //Check if server file exists
-        if (File.Exists(path))
+        if (File.Exists(GlobalFilePath))
         {
-            Debug.Log("File exists at: " + path);
-            return true;
-        }
-        else
-        {
-            Debug.Log("File doesn't exist at: '" + path + "'");
-            Debug.Log("Creating server property file with default settings...");
+            Debug.Log("File exists at: " + GlobalFilePath);
 
-            //Attempt to write server property file to application path
             try
             {
-                string[] lines = {
-                "#Taurus Dedicated Unity Server",
-                "Server-Name=Tile goes here",
-                "Description=Description goes here",
-                "Server-Port=2500",
-                "Max-Players=8" };
-
-                //Create default values
-                using (StreamWriter file = new StreamWriter(path))
-                {
-                    foreach (string line in lines)
-                    {
-                        file.WriteLine(line);
-                    }
-                }
-
-                Debug.Log("Created default server properties at '" + path + "'");
-                return true;
+                InterpretProperties(GlobalFilePath, ref GlobalData);
             }
             catch
             {
-                Debug.LogError("Could not write property file to '" + path + "' maybe the path is inaccessible?");
-                return false;
+                Debug.LogError("Cannot read or interpret server properties. Maybe it's inaccessible or corrupt?");
+                System.Console.ReadKey();
+                Application.Quit();
+            }
+        }
+
+        //If file doesn't exist try to write defaults
+        else
+        {
+            try
+            {
+                WriteDefaults(GlobalFilePath);
+                InterpretProperties(GlobalFilePath, ref GlobalData);
+            }
+            catch
+            {
+                Debug.LogError("Could not write property file to '" + GlobalFilePath + "' maybe the path is inaccessible?");
+                System.Console.ReadKey();
+                Application.Quit();
             }
         }
     }
+
+
+    /// <summary>
+    /// Given path write a default server property file
+    /// </summary>
+    /// <param name="path"></param>
+    private void WriteDefaults(string path)
+    {
+        Debug.Log("File doesn't exist at: '" + path + "'");
+        Debug.Log("Creating server property file with default settings...");
+
+        //Attempt to write server property file to application path
+        string[] lines = {
+                "# Taurus Dedicated Unity Server",
+                "# ",
+                "# Map IDs: ",
+                "# 0. Testing Grounds ",
+                "# 1. Fighting Arena",
+                "# ",
+                "# Gamemode IDs: ",
+                "# 0. Team Deathmatch ",
+                "# 1. Capture the Flag", 
+                "# 2. King of the Hill",
+                "# 3. Free for All\n",
+                "# Server Properties ",
+                "Version=" + Application.version,
+                "Server-Name=Tile goes here",
+                "Description=Description goes here",
+                "Server-Port=2500",
+                "Max-Players=8",
+                "Map-ID=0",
+                "Gamemode-ID=0"
+                };
+
+        //Create default values
+        using (StreamWriter file = new StreamWriter(path))
+        {
+            foreach (string line in lines)
+            {
+                file.WriteLine(line);
+            }
+        }
+
+        Debug.Log("Created default server properties at '" + path + "'");
+    }
+
 
     /// <summary>
     /// Interprets server property file text to 'ServerData' class type
     /// </summary>
-    private void InterpretProperties(string path)
+    private void InterpretProperties(string path, ref ServerData data)
     {
-        ServerData data = new ServerData();
-        string[] keywords = new string[] { "Server-Name", "Description", "Server-Port", "Max-Players" };
-        
+        string line = string.Empty;
+        List<string> lines = new List<string>();
 
-        try
+        //Get all lines in file
+        StreamReader file = new StreamReader(path);
+        while ((line = file.ReadLine()) != null) lines.Add(line);
+
+        //Interate through each line, find keywords and parse data from lines
+        for (int i = 0; i < lines.Count; i++)
         {
-            int counter = 0;
-            string line = string.Empty;
-            string[] lines = new string[6]; //Number of lines in file
-
-            //Get all lines in file
-            StreamReader file = new StreamReader(path);
-            while((line = file.ReadLine()) != null)
+            for (int j = 0; j < Properties.Length; j++)
             {
-                lines[counter] = line;
-                counter++;
-            }
-
-            //Interate through each line, find keywords and parse data from lines
-            for(int i = 0; i < counter; i++)
-            {
-                for(int j = 0; j < keywords.Length; j++)
+                //Check if current line contains any keywords
+                if (lines[i].Contains(Properties[j]))
                 {
-                    //Check if current line contains any keywords
-                    if (lines[i].Contains(keywords[j]))
+                    //Once keyword is found split left and right side of = to get data on right-hand side
+                    string[] temp = lines[i].Split('=');
+
+                    //If any value is empty report it
+                    if(temp[1] == string.Empty)
                     {
-                        //Once keyword is found split left and right side of = to get data on right-hand side
-                        string[] temp = lines[i].Split('=');
+                        Debug.LogError(temp[0] + " has no value assigned for it!");
+                    }
 
-                        Debug.Log(temp[1]);
-
-                        //Dependent on value, assign to ServerData value
-                        switch (keywords[j])
-                        {
-                            case "Server-Name":
-                                data.name = temp[1];
-                                break;
-                            case "Description":
-                                data.description = temp[1];
-                                break;
-                            case "Server-Port":
-                                data.port = int.Parse(temp[1]);
-                                break;
-                            case "Max-Players":
-                                data.maxPlayers = int.Parse(temp[1]);
-                                break;
-                        }
-
+                    //Dependent on value, assign to ServerData value
+                    switch (Properties[j])
+                    {
+                        case "Server-Name":
+                            data.name = temp[1];
+                            break;
+                        case "Description":
+                            data.description = temp[1];
+                            break;
+                        case "Server-Port":
+                            data.port = int.Parse(temp[1]);
+                            break;
+                        case "Max-Players":
+                            data.maxPlayers = int.Parse(temp[1]);
+                            break;
+                        case "Map-ID":
+                            data.mapID = int.Parse(temp[1]);
+                            break;
+                        case "Gamemode-ID":
+                            data.gamemodeID = int.Parse(temp[1]);
+                            break;
+                        case "Version":
+                            VersionCheck(temp[1]);
+                            break;
                     }
                 }
             }
+        }
 
-            Debug.Log("Loaded server properties");
+        Debug.Log("Loaded server properties sucessfully.");
+        VerboseServerInfo();
+        Debug.Log("");
+    }
 
+    /// <summary>
+    /// Outputs a debug log that describes all the server information for sanity sake
+    /// </summary>
+    private void VerboseServerInfo()
+    {
+        string output = ("Server Info: \n"
+            + "Server Name: " + GlobalData.name + "\n"
+            + "Description: " + GlobalData.description + "\n"
+            + "Server-Port: " + GlobalData.port + "\n"
+            + "Max-Players: " + GlobalData.maxPlayers + "\n"
+            + "Map-ID: " + GlobalData.mapID + "\n"
+            + "Gamemode-ID: " + GlobalData.gamemodeID + "\n"
+            + "Version: " + Application.version);
 
+        Debug.Log(output);
+    }
+
+    /// <summary>
+    /// Check what version the server is running on versus the properties file
+    /// </summary>
+    private void VersionCheck(string fileVersion)
+    {
+        //Attempt to find version numbers and compare between them
+        try
+        {
+            if (float.Parse(fileVersion) > float.Parse(Application.version))
+            {
+                Debug.LogWarning("This property file is newer than the current server version.\n" +
+                    "This may cause issues with the server, so be wary of any issues or bugs that arise.\n" +
+                    "Try running an older server version that matches the property file. Or update the property file.");
+            }
+            else if (float.Parse(fileVersion) < float.Parse(Application.version))
+            {
+                Debug.LogWarning(
+                "This server property file is oudated, it should be running on version: " + Application.version + " but is running on version: " + fileVersion
+                + "\nPlease update this file or delete it to refresh it with a new version's default values."
+                + "\nYou can keep the server running with these current settings, but issues or bugs may arrise so please be wary."
+                );
+            }
         }
         catch
         {
-            Debug.LogError("Cannot read or interpret server properties. Maybe it's inaccessible or corrupt?");
+            Debug.LogWarning("Error: Could not compare between versions.");
         }
 
+        
     }
-
 }

@@ -66,20 +66,103 @@ public class ServerData
     public string description { get; set; }
     public int port { get; set; }
     public int maxPlayers { get; set; }
+    public int mapID { get; set; }
+    public int gamemodeID { get; set; }
 
+    /// <summary>
+    /// ServerData with all default values
+    /// </summary>
     public ServerData()
     {
         this.name = "Default Server";
         this.description = "Give me a description!";
         this.port = 2500;
         this.maxPlayers = 8;
+        this.mapID = 0;
+        this.gamemodeID = 0;
     }
 
+    /// <summary>
+    /// ServerData object with default values but custom name
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    public ServerData(string name)
+    {
+        this.name = name;
+        this.description = "Default Taurus Server Description";
+        this.port = 2500;
+        this.maxPlayers = 8;
+        this.mapID = 0;
+        this.gamemodeID = 0;
+    }
+
+    /// <summary>
+    /// ServerData object with default values but custom name and description
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    public ServerData(string name, string description)
+    {
+        this.name = name;
+        this.description = description;
+        this.port = 2500;
+        this.maxPlayers = 8;
+        this.mapID = 0;
+        this.gamemodeID = 0;
+    }
+
+    /// <summary>
+    /// ServerData object with default values but custom name, description, and port
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    /// <param name="port"></param>
+    /// <param name="maxPlayers"></param>
+    public ServerData(string name, string description, int port)
+    {
+        this.name = name;
+        this.description = description;
+        this.port = port;
+        this.maxPlayers = 8;
+        this.mapID = 0;
+        this.gamemodeID = 0;
+    }
+
+    /// <summary>
+    /// ServerData object with default values but custom name, description, port, and max players
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    /// <param name="port"></param>
+    /// <param name="maxPlayers"></param>
     public ServerData (string name, string description, int port, int maxPlayers)
     {
         this.name = name;
         this.description = description;
         this.port = port;
         this.maxPlayers = maxPlayers;
+        this.mapID = 0;
+        this.gamemodeID = 0;
+    }
+
+    /// <summary>
+    /// Fully customizated server data
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    /// <param name="port"></param>
+    /// <param name="maxPlayers"></param>
+    /// <param name="currentMapID"></param>
+    /// <param name="currentGamemode"></param>
+    /// <param name="inRandomOrder"></param>
+    public ServerData(string name, string description, int port, int maxPlayers, int mapID, int currentGamemode)
+    {
+        this.name = name;
+        this.description = description;
+        this.port = port;
+        this.maxPlayers = maxPlayers;
+        this.mapID = mapID;
+        this.gamemodeID = currentGamemode;
     }
 }
