@@ -33,7 +33,7 @@ public class Server
         //Copy data from given data
         serverData = sd;
 
-        Debug.Log("Starting server...");
+        Console.WriteLine("Starting server...");
         InitializeServerData();
 
         //Start Listeners
@@ -44,7 +44,7 @@ public class Server
         udpListener.BeginReceive(UDPReceiveCallback, null);
 
 
-        Debug.Log($"Server started on port {sd.port}.");
+        Console.WriteLine($"Server started on port {sd.port}.");
         running = true;
     }
 
@@ -77,7 +77,7 @@ public class Server
             { (int)ClientPackets.videoPlayerStatus, ServerHandle.VideoPlayerStatus },
             { (int)ClientPackets.playerCosmetics, ServerHandle.PlayerCosmetics }
         };
-        Debug.Log("Initialized packets.");
+        Console.WriteLine("Initialized packets.");
     }
 
 
@@ -88,7 +88,7 @@ public class Server
     {
         TcpClient _client = tcpListener.EndAcceptTcpClient(_result);
         tcpListener.BeginAcceptTcpClient(TCPConnectCallback, null);
-        Debug.Log($"Incoming connection from {_client.Client.RemoteEndPoint}...");
+        Console.WriteLine($"Incoming connection from {_client.Client.RemoteEndPoint}...");
 
         for (int i = 1; i <= serverData.maxPlayers; i++)
         {
@@ -99,7 +99,7 @@ public class Server
             }
         }
 
-        Debug.Log($"{_client.Client.RemoteEndPoint} failed to connect: Server full!");
+        Console.WriteLine($"{_client.Client.RemoteEndPoint} failed to connect: Server full!");
     }
 
     /// <summary>Receives incoming UDP data.</summary>
@@ -141,7 +141,7 @@ public class Server
         }
         catch (Exception _ex)
         {
-            Debug.Log($"Error receiving UDP data: {_ex}");
+            Console.WriteLine($"Error receiving UDP data: {_ex}");
         }
     }
 
@@ -159,7 +159,7 @@ public class Server
         }
         catch (Exception _ex)
         {
-            Debug.Log($"Error sending data to {_clientEndPoint} via UDP: {_ex}");
+            Console.WriteLine($"Error sending data to {_clientEndPoint} via UDP: {_ex}");
         }
     }
 }

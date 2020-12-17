@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 /// <summary>
 /// Class that is first called on Server Application startup, to ensure everything loads properly.
@@ -14,8 +15,13 @@ public class Preload : MonoBehaviour
     //Load settings on awake
     private void Awake()
     {
+
         //Set up core features before doing anything else
+        ConsoleSetup();
         UnitySetup();
+
+        //Clear Console
+        Console.Clear();
 
         //HAVE TO DO THIS IN AWAKE
         string PropertyPath = (Application.dataPath + "/server-properties.txt");
@@ -31,18 +37,18 @@ public class Preload : MonoBehaviour
         if (CheckPropertyFileExists(PropertyPath, ref data))
         {
             //Start Server from Backend script
-            VerboseServerInfo(data);
             Server.Start(data);
+
+            Console.Title = data.name;
 
             //Load proper map/scene
             SceneManager.LoadScene(data.mapID + 1, LoadSceneMode.Additive);
-
         }
 
         //If one can't be created exit program
         else
         {
-            Debug.LogError("Could not read/write property file to '" + PropertyPath + "' maybe the path is inaccessible?");
+            Console.WriteLine("Could not read/write property file to '" + PropertyPath + "' maybe the path is inaccessible?");
             System.Console.ReadKey();
             Application.Quit();
         }
@@ -63,7 +69,7 @@ public class Preload : MonoBehaviour
         //Check if server file exists
         if (File.Exists(path))
         {
-            Debug.Log("File exists at: " + path);
+            Console.WriteLine("File exists at: " + path);
 
             try
             {
@@ -103,13 +109,13 @@ public class Preload : MonoBehaviour
         {
             try
             {
-                Debug.Log("Document doesn't exists at: " + path + "\nCreating one...");
+                Console.WriteLine("Document doesn't exists at: " + path + "\nCreating one...");
                 WriteServerDocumentation(path);
             }
 
             catch
             {
-                Debug.Log("Could not write server document to: " + path + "\nMaybe it is unaccessable?");
+                Console.WriteLine("Could not write server document to: " + path + "\nMaybe it is unaccessable?");
             } 
         }
     }
@@ -144,7 +150,7 @@ public class Preload : MonoBehaviour
                     //If any value is empty report it
                     if(temp[1] == string.Empty)
                     {
-                        Debug.LogError(temp[0] + " has no value assigned for it!");
+                        Console.WriteLine(temp[0] + " has no value assigned for it!");
                     }
 
                     //Dependent on value, assign to ServerData value
@@ -185,8 +191,6 @@ public class Preload : MonoBehaviour
         }
 
         Debug.Log("Loaded server properties sucessfully.");
-        Debug.Log("");
-
         return data;
     }
 
@@ -200,22 +204,20 @@ public class Preload : MonoBehaviour
         {
             if (float.Parse(fileVersion) > float.Parse(Application.version))
             {
-                Debug.LogWarning("This property file is newer than the current server version.\n" +
-                    "This may cause issues with the server, so be wary of any issues or bugs that arise.\n" +
-                    "Try running an older server version that matches the property file. Or update the property file.");
+                Console.WriteLine("This property file is newer than the current server version.");
+                Console.WriteLine("This may cause issues with the server, so be wary of any issues or bugs that arise.");
+                Console.WriteLine("Try running an older server version that matches the property file. Or update the property file.");
             }
             else if (float.Parse(fileVersion) < float.Parse(Application.version))
             {
-                Debug.LogWarning(
-                "This server property file is oudated, it should be running on version: " + Application.version + " but is running on version: " + fileVersion
-                + "\nPlease update this file or delete it to refresh it with a new version's default values."
-                + "\nYou can keep the server running with these current settings, but issues or bugs may arrise so please be wary."
-                );
+                Console.WriteLine("This server property file is oudated, it should be running on version: " + Application.version + " but is running on version: " + fileVersion);
+                Console.WriteLine("Please update this file or delete it to refresh it with a new version's default values.");
+                Console.WriteLine("You can keep the server running with these current settings, but issues or bugs may arrise so please be wary.");
             }
         }
         catch
         {
-            Debug.LogWarning("Error: Could not compare between versions.");
+            Console.WriteLine("Error: Could not compare between versions.");
         }
     }
 
@@ -273,8 +275,8 @@ public class Preload : MonoBehaviour
     /// <param name="path"></param>
     private void WriteDefaults(string path)
     {
-        Debug.Log("Server property file doesn't exist at: '" + path + "'");
-        Debug.Log("Creating server property file with default settings...");
+        Console.WriteLine("Server property file doesn't exist at: '" + path + "'");
+        Console.WriteLine("Creating server property file with default settings...");
 
         //Attempt to write server property file to application path
         string[] lines = {
@@ -302,26 +304,16 @@ public class Preload : MonoBehaviour
             }
         }
 
-        Debug.Log("Created default server properties at '" + path + "'");
+        Console.WriteLine("Created default server properties at '" + path + "'");
     }
 
     /// <summary>
-    /// Outputs a debug log that describes all the server information for sanity sake
+    /// Set up the console with custom parameters
     /// </summary>
-    private void VerboseServerInfo(ServerData data)
+    private void ConsoleSetup()
     {
-        string output = ("Server Info: \n"
-            + "Server Name: " + data.name + "\n"
-            + "Description: " + data.description + "\n"
-            + "Server-Port: " + data.port + "\n"
-            + "Max-Players: " + data.maxPlayers + "\n"
-            + "Map-ID: " + data.mapID + "\n"
-            + "Gamemode-ID: " + data.gamemodeID + "\n"
-            + "Version: " + Application.version + "\n"
-            + "MOTD: " + data.MOTD
-            );
-
-        Debug.Log(output);
+        Console.BackgroundColor = ConsoleColor.Gray;
+        Console.ForegroundColor = ConsoleColor.Black;
     }
 
     /// <summary>

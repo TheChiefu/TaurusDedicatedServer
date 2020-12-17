@@ -86,4 +86,23 @@ public class ServerData
         this.MOTD = "Welcome to the Server! Enjoy your stay.";
         this.Admins = null;
     }
+
+    /// <summary>
+    /// Outputs a debug log that describes all the server information for sanity sake
+    /// </summary>
+    public void VerboseServerInfo()
+    {
+        string output = ("Server Info: \n"
+            + "Name: " + this.name + "\n"
+            + "Description: " + this.description + "\n"
+            + "Port: " + this.port + "\n"
+            + "Max Players: " + this.maxPlayers + "\n"
+            + "Map ID: " + this.mapID + "\n"
+            + "Gamemode ID: " + this.gamemodeID + "\n"
+            + "Version: " + Application.version + "\n"
+            + "MOTD: " + this.MOTD
+            );
+
+        Debug.Log(output);
+    }
 }

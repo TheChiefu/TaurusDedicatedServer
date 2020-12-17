@@ -29,6 +29,11 @@ public class LevelManager : MonoBehaviour
             Destroy(this);
         }
 
+        //Output Server Details to Log once level is loaded
+        System.Console.Clear();
+        Server.serverData.VerboseServerInfo();
+        System.Console.WriteLine("Loaded map: " + UnityEngine.SceneManagement.SceneManager.GetSceneAt(Server.serverData.mapID+1).name);
+
         //If there are no specified spawnpoints in manager, attempt to get all points by tag
         if(spawnPoints.Length <= 0) spawnPoints = Helpers.FindTransformByTag("SP");
     }

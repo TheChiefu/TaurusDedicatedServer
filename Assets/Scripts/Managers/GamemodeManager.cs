@@ -35,6 +35,8 @@ public class GamemodeManager : MonoBehaviour
             Destroy(this);
         }
 
+        //Output Gamemode Details to Log
+        System.Console.WriteLine("Current Gamemode: " + gamemode.ToString());
         
     }
 
