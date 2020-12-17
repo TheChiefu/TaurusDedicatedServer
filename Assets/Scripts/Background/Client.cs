@@ -16,6 +16,10 @@ public class Client
     public TCP tcp;
     public UDP udp;
 
+    /// <summary>
+    /// Default Client constructor
+    /// </summary>
+    /// <param name="_clientId"></param>
     public Client(int _clientId)
     {
         id = _clientId;
@@ -214,7 +218,7 @@ public class Client
     /// <param name="_playerName">The username of the new player.</param>
     public void SendIntoGame(PlayerData pd)
     {
-        player = NetworkManager.instance.InstantiatePlayer();
+        player = LevelManager.instance.InstantiatePlayer();
         player.Initialize(id, pd.username, pd.modelIndex, pd.materialIndex);
 
         // Send all players to the new player
@@ -224,7 +228,7 @@ public class Client
             {
                 if (_client.id != id)
                 {
-                    ServerSend.SpawnPlayer(id, _client.player, NetworkManager.instance.spawnPoints);
+                    ServerSend.SpawnPlayer(id, _client.player, LevelManager.instance.spawnPoints);
                 }
             }
         }
@@ -234,7 +238,7 @@ public class Client
         {
             if (_client.player != null)
             {
-                ServerSend.SpawnPlayer(_client.id, player, NetworkManager.instance.spawnPoints);
+                ServerSend.SpawnPlayer(_client.id, player, LevelManager.instance.spawnPoints);
             }
         }
 

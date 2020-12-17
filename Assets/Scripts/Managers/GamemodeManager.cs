@@ -40,7 +40,8 @@ public class GamemodeManager : MonoBehaviour
 
     private void Start()
     {
-        gamemode = NetworkManager.instance.gamemode;
+        //gamemode = NetworkManager.instance.gamemode;
+        gamemode = (Gamemode)Server.serverData.gamemodeID;
 
         //Setup Gamemode based on given ID
         switch (gamemode)

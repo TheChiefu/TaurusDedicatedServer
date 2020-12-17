@@ -11,6 +11,8 @@ using UnityEngine;
 public class Server
 {
     public static ServerData serverData { get; private set; }
+    public static bool running { get; private set; }
+
 
     public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
     public delegate void PacketHandler(int _fromClient, Packet _packet);
@@ -19,25 +21,67 @@ public class Server
     private static TcpListener tcpListener;
     private static UdpClient udpListener;
 
-    /// <summary>Starts the server.</summary>
-    /// <param name="_maxPlayers">The maximum players that can be connected simultaneously.</param>
-    /// <param name="_port">The port to start the server on.</param>
+
+    
+
+    /// <summary>
+    /// Start server from given server data values
+    /// </summary>
+    /// <param name="sd"></param>
     public static void Start(ServerData sd)
     {
+        //Copy data from given data
         serverData = sd;
 
         Debug.Log("Starting server...");
         InitializeServerData();
 
+        //Start Listeners
         tcpListener = new TcpListener(IPAddress.Any, sd.port);
         tcpListener.Start();
         tcpListener.BeginAcceptTcpClient(TCPConnectCallback, null);
-
         udpListener = new UdpClient(sd.port);
         udpListener.BeginReceive(UDPReceiveCallback, null);
 
+
         Debug.Log($"Server started on port {sd.port}.");
+        running = true;
     }
+
+    public static void Stop()
+    {
+        running = false;
+        tcpListener.Stop();
+        udpListener.Close();
+    }
+
+    /// <summary>
+    /// Initializes all necessary server data. MUST update packetHandler with new ClientPackets when new ones are added to ensure data is updated properly.
+    /// </summary>
+    private static void InitializeServerData()
+    {
+        //Populate client list with empty clients
+        for (int i = 1; i <= serverData.maxPlayers; i++)
+        {
+            clients.Add(i, new Client(i));
+        }
+
+        //ServerHandle class manages what to do with the ClientPackets via a function call
+        packetHandlers = new Dictionary<int, PacketHandler>()
+        {
+            { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
+            { (int)ClientPackets.playerMovement, ServerHandle.PlayerMovement },
+            { (int)ClientPackets.playerShoot, ServerHandle.PlayerShoot },
+            { (int)ClientPackets.playerThrowItem, ServerHandle.PlayerThrowItem },
+            { (int)ClientPackets.playerAnimationData, ServerHandle.PlayerAnimationData },
+            { (int)ClientPackets.videoPlayerStatus, ServerHandle.VideoPlayerStatus },
+            { (int)ClientPackets.playerCosmetics, ServerHandle.PlayerCosmetics }
+        };
+        Debug.Log("Initialized packets.");
+    }
+
+
+    // Handlers //
 
     /// <summary>Handles new TCP connections.</summary>
     private static void TCPConnectCallback(IAsyncResult _result)
@@ -117,32 +161,5 @@ public class Server
         {
             Debug.Log($"Error sending data to {_clientEndPoint} via UDP: {_ex}");
         }
-    }
-
-    /// <summary>Initializes all necessary server data.</summary>
-    private static void InitializeServerData()
-    {
-        for (int i = 1; i <= serverData.maxPlayers; i++)
-        {
-            clients.Add(i, new Client(i));
-        }
-
-        packetHandlers = new Dictionary<int, PacketHandler>()
-        {
-            { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
-            { (int)ClientPackets.playerMovement, ServerHandle.PlayerMovement },
-            { (int)ClientPackets.playerShoot, ServerHandle.PlayerShoot },
-            { (int)ClientPackets.playerThrowItem, ServerHandle.PlayerThrowItem },
-            { (int)ClientPackets.playerAnimationData, ServerHandle.PlayerAnimationData },
-            { (int)ClientPackets.videoPlayerStatus, ServerHandle.VideoPlayerStatus },
-            { (int)ClientPackets.playerCosmetics, ServerHandle.PlayerCosmetics }
-        };
-        Debug.Log("Initialized packets.");
-    }
-
-    public static void Stop()
-    {
-        tcpListener.Stop();
-        udpListener.Close();
     }
 }

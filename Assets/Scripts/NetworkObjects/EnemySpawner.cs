@@ -17,7 +17,7 @@ public class EnemySpawner : MonoBehaviour
 
         if (Enemy.enemies.Count < Enemy.maxEnemies)
         {
-            NetworkManager.instance.InstantiateEnemy(transform.position);
+            LevelManager.instance.InstantiateEnemy(transform.position);
         }
         StartCoroutine(SpawnEnemy());
     }

@@ -14,7 +14,8 @@ public static class Constants
     {
         Deathmatch,
         CaptureTheFlag,
-        KingOfTheHill
+        KingOfTheHill,
+        FreeForAll
     }
 
 

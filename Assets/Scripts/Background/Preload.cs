@@ -2,31 +2,41 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Class that is first called on Server Application startup, to ensure everything loads properly.
+/// </summary>
 public class Preload : MonoBehaviour
 {
     
-    /// <summary>
-    /// Property fields accessable in server-properties file that modify server behavior
-    /// </summary>
-    private string[] Properties = new string[] { "Server-Name=", "Server-Description=", "Server-Port=", "Max-Players=", "Map-ID=", "Gamemode-ID=", "Server-Version=", "Server-MOTD=", "Server-Admins="};
-    public ServerData GlobalData = null;
 
     //Load settings on awake
     private void Awake()
     {
+        //Set up core features before doing anything else
+        UnitySetup();
+
         //HAVE TO DO THIS IN AWAKE
         string PropertyPath = (Application.dataPath + "/server-properties.txt");
         string DocumentPath = (Application.dataPath + "/server-documentation.txt");
+
+        //Create server data to be passed to Server.cs script
+        ServerData data = null;
 
         //Check if server documentation exists, if not create it
         CheckDocsExists(DocumentPath);
 
         //Check if server property file exists, if not create it and then start server
-        if (CheckPropertyFileExists(PropertyPath, ref GlobalData))
+        if (CheckPropertyFileExists(PropertyPath, ref data))
         {
-            VerboseServerInfo(GlobalData);
-            //Start Server
+            //Start Server from Backend script
+            VerboseServerInfo(data);
+            Server.Start(data);
+
+            //Load proper map/scene
+            SceneManager.LoadScene(data.mapID + 1, LoadSceneMode.Additive);
+
         }
 
         //If one can't be created exit program
@@ -111,6 +121,8 @@ public class Preload : MonoBehaviour
     {
 
         ServerData data = new ServerData();
+        string[] Properties = new string[] { "Server-Name=", "Server-Description=", "Server-Port=", "Max-Players=", "Map-ID=", "Gamemode-ID=", "Server-Version=", "Server-MOTD=", "Server-Admins="};
+
 
         //Get all lines in file
         List<string> lines = new List<string>();
@@ -310,5 +322,20 @@ public class Preload : MonoBehaviour
             );
 
         Debug.Log(output);
+    }
+
+    /// <summary>
+    /// Setup Unity based values
+    /// </summary>
+    private void UnitySetup()
+    {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 120;
+    }
+
+    //When application quits stop server
+    private void OnApplicationQuit()
+    {
+        Server.Stop();
     }
 }

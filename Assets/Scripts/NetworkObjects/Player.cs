@@ -197,7 +197,7 @@ public class Player : MonoBehaviour
         if (itemAmount > 0)
         {
             itemAmount--;
-            NetworkManager.instance.InstantiateProjectile(shootOrigin).Initialize(_viewDirection, throwingForce, id);
+            LevelManager.instance.InstantiateProjectile(shootOrigin).Initialize(_viewDirection, throwingForce, id);
         }
     }
 
@@ -219,7 +219,7 @@ public class Player : MonoBehaviour
             controller.enabled = false;
 
             //Spawn at random position
-            Transform[] spawnPoints = NetworkManager.instance.spawnPoints;
+            Transform[] spawnPoints = LevelManager.instance.spawnPoints;
             int rand = Random.Range(0, spawnPoints.Length);
             transform.position = spawnPoints[rand].position;
 
