@@ -11,8 +11,11 @@ public class Client
     public static int dataBufferSize = 4096;
 
     public int id;
-    public Player player;
+    public string username;
     public int modelIndex;
+    public int materialIndex;
+
+    public Player player;
     public TCP tcp;
     public UDP udp;
 
@@ -215,11 +218,10 @@ public class Client
     }
 
     /// <summary>Sends the client into the game and informs other clients of the new player.</summary>
-    /// <param name="_playerName">The username of the new player.</param>
-    public void SendIntoGame(PlayerData pd)
+    public void SendIntoGame()
     {
         player = LevelManager.instance.InstantiatePlayer();
-        player.Initialize(id, pd.username, pd.modelIndex, pd.materialIndex);
+        player.Initialize(id, username, modelIndex, materialIndex);
 
         // Send all players to the new player
         foreach (Client _client in Server.clients.Values)

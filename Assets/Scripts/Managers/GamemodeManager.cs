@@ -24,16 +24,7 @@ public class GamemodeManager : MonoBehaviour
     //Pre-Setup, Server also starts in awake so any data requiring server info is after Awake()
     private void Awake()
     {
-
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Debug.Log("Instance already exists, destroying object!");
-            Destroy(this);
-        }
+        Initialize();
 
         //Output Gamemode Details to Log
         System.Console.WriteLine("Current Gamemode: " + gamemode.ToString());
@@ -42,7 +33,6 @@ public class GamemodeManager : MonoBehaviour
 
     private void Start()
     {
-        //gamemode = NetworkManager.instance.gamemode;
         gamemode = (Gamemode)Server.serverData.gamemodeID;
 
         //Setup Gamemode based on given ID
@@ -69,9 +59,21 @@ public class GamemodeManager : MonoBehaviour
         playerDeaths = new int[totalPlayers];
     }
 
+    private void Initialize()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Debug.Log("Instance of Gamemode Manager already exists, destroying object!");
+            Destroy(this);
+        }
+    }
+
     private void Setup_CTF()
     {
-        
         //If flags are not given search level for them
         if (flags.Length <= 0) flags = Helpers.FindTransformByTag("Flag");
     }

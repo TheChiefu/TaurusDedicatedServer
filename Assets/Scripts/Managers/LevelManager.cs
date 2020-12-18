@@ -17,17 +17,11 @@ public class LevelManager : MonoBehaviour
     public GameObject projectilePrefab;
     public Transform[] spawnPoints;
 
+    private bool prelobbyIsDone = false; //Wait for preload timer boolean
+
     private void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Debug.Log("Instance already exists, destroying object!");
-            Destroy(this);
-        }
+        Initialize();
 
         //Output Server Details to Log once level is loaded
         System.Console.Clear();
@@ -36,11 +30,48 @@ public class LevelManager : MonoBehaviour
 
         //If there are no specified spawnpoints in manager, attempt to get all points by tag
         if(spawnPoints.Length <= 0) spawnPoints = Helpers.FindTransformByTag("SP");
+
+        //Start wait timer for prelobby
+        StartCoroutine(PrelobbyTimer(120));
+        if(prelobbyIsDone)
+        {
+            //Spawn in all players, and items
+            for(int i = 0; i < Server.clients.Count; i++)
+            {
+                Server.clients[i].SendIntoGame();
+            }
+        }
+
+    }
+
+    private void Initialize()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Debug.Log("Instance of Level Manager already exists, destroying object!");
+            Destroy(this);
+        }
     }
 
 
-    
+    private IEnumerator PrelobbyTimer(int seconds)
+    {
+        prelobbyIsDone = false;
+        yield return new WaitForSecondsRealtime(seconds);
+        prelobbyIsDone = true;
+    }
 
+
+    // Instantiaters //
+
+    /// <summary>
+    /// Spawn player
+    /// </summary>
+    /// <returns></returns>
     public Player InstantiatePlayer()
     {
         return Instantiate(playerPrefab, new Vector3(0f, 0.5f, 0f), Quaternion.identity).GetComponent<Player>();

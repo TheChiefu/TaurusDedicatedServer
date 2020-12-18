@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -92,17 +93,15 @@ public class ServerData
     /// </summary>
     public void VerboseServerInfo()
     {
-        string output = ("Server Info: \n"
-            + "Name: " + this.name + "\n"
-            + "Description: " + this.description + "\n"
-            + "Port: " + this.port + "\n"
-            + "Max Players: " + this.maxPlayers + "\n"
-            + "Map ID: " + this.mapID + "\n"
-            + "Gamemode ID: " + this.gamemodeID + "\n"
-            + "Version: " + Application.version + "\n"
-            + "MOTD: " + this.MOTD
-            );
-
-        Debug.Log(output);
+        Console.WriteLine("-- Server Info --");
+        Console.WriteLine("Name: " + this.name);
+        Console.WriteLine("Description: " + this.description);
+        Console.WriteLine("Port: " + this.port);
+        Console.WriteLine("Max Players: " + this.description);
+        Console.WriteLine("Map ID: " + this.mapID);
+        Console.WriteLine("Gamemode ID: " + this.gamemodeID);
+        Console.WriteLine("MOTD: " + this.MOTD);
+        Console.WriteLine("Version: " + Application.version);
+        Console.WriteLine("-----------------");
     }
 }

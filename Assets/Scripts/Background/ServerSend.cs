@@ -88,6 +88,8 @@ public class ServerSend
             _packet.Write(serverData.description);
             _packet.Write(serverData.port);
             _packet.Write(serverData.maxPlayers);
+            _packet.Write(serverData.mapID);
+            _packet.Write(serverData.gamemodeID);
 
             SendTCPData(_toClient, _packet);
         }

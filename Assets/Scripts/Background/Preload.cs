@@ -29,7 +29,7 @@ public class Preload : MonoBehaviour
 
         //Create server data to be passed to Server.cs script
         ServerData data = null;
-
+        
         //Check if server documentation exists, if not create it
         CheckDocsExists(DocumentPath);
 
@@ -38,18 +38,25 @@ public class Preload : MonoBehaviour
         {
             //Start Server from Backend script
             Server.Start(data);
-
             Console.Title = data.name;
 
             //Load proper map/scene
-            SceneManager.LoadScene(data.mapID + 1, LoadSceneMode.Additive);
+            if(CheckForValidData(data))
+            {
+                SceneManager.LoadScene(data.mapID + 1, LoadSceneMode.Additive);
+            }
+            else
+            {
+                Console.ReadKey();
+                Application.Quit();
+            }   
         }
 
         //If one can't be created exit program
         else
         {
             Console.WriteLine("Could not read/write property file to '" + PropertyPath + "' maybe the path is inaccessible?");
-            System.Console.ReadKey();
+            Console.ReadKey();
             Application.Quit();
         }
     }
@@ -260,12 +267,10 @@ public class Preload : MonoBehaviour
             };
 
         //Create default values
-        using (StreamWriter file = new StreamWriter(path))
+        using StreamWriter file = new StreamWriter(path);
+        foreach (string line in output)
         {
-            foreach (string line in output)
-            {
-                file.WriteLine(line);
-            }
+            file.WriteLine(line);
         }
     }
 
@@ -305,6 +310,87 @@ public class Preload : MonoBehaviour
         }
 
         Console.WriteLine("Created default server properties at '" + path + "'");
+    }
+
+
+    /// <summary>
+    /// Check all server data for valid values
+    /// </summary>
+    /// <param name="data"></param>
+    private bool CheckForValidData(ServerData data)
+    {
+        //Checker for if no data is present, but is still okay for server to run without
+        bool valid = false;
+
+        //No name given
+        if(data.name == string.Empty)
+        {
+            Console.WriteLine("Notice: No name given using default server name.");
+            valid = true;
+        }
+
+        //No description given
+        if(data.description == string.Empty)
+        {
+            Console.WriteLine("Notice: No description given using default server description.");
+            valid = true;
+        }
+
+        //Outside of port range
+        if(data.port < 0 || data.port > 65535)
+        {
+            Console.WriteLine("Outside of valid port range!");
+            valid = false;
+        }
+
+        //Less than 1 player or server cap
+        if(data.maxPlayers < 1 || data.maxPlayers > 32)
+        {
+            Console.WriteLine("Outside of valid max player range!");
+            valid = false;
+        }
+
+
+        //Below 0 or above available map IDs
+        if(data.mapID < 0 || data.mapID > 3)
+        {
+            Console.WriteLine("Outside of valid the mapID range!");
+            valid = false;
+        }
+
+        //Below 0 or above available gamemode IDs
+        if(data.gamemodeID < 0 || data.gamemodeID > 3)
+        {
+            Console.WriteLine("Outside of valid the gamemodeID range!");
+            valid = false;
+        }
+
+        //No motto of the day given
+        if(data.MOTD == string.Empty)
+        {
+            Console.WriteLine("No MOTD given, using default one.");
+            valid = true;
+        }
+
+        //No admins
+        if(data.Admins == null)
+        {
+            Console.WriteLine("Notice: No admins given, no one on the server can access server commands.");
+            valid = true;
+        }
+
+        //Returner
+        if (valid)
+        {
+            Console.WriteLine("No outstanding errors, using default values on certain values.");
+            return true;
+        }
+        else
+        {
+            Console.WriteLine("Quitting the server.");
+            return false;
+        }
+
     }
 
     /// <summary>
