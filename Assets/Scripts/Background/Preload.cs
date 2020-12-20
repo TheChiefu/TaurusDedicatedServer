@@ -43,6 +43,7 @@ public class Preload : MonoBehaviour
             //Load proper map/scene
             if(CheckForValidData(data))
             {
+                
                 SceneManager.LoadScene(data.mapID + 1, LoadSceneMode.Additive);
             }
             else
@@ -313,6 +314,8 @@ public class Preload : MonoBehaviour
     }
 
 
+    ////// QUESTIONABLE CODE FOR CHECKING VALID DATA //////
+
     /// <summary>
     /// Check all server data for valid values
     /// </summary>
@@ -320,7 +323,7 @@ public class Preload : MonoBehaviour
     private bool CheckForValidData(ServerData data)
     {
         //Checker for if no data is present, but is still okay for server to run without
-        bool valid = false;
+        bool valid = true;
 
         //No name given
         if(data.name == string.Empty)
@@ -339,14 +342,14 @@ public class Preload : MonoBehaviour
         //Outside of port range
         if(data.port < 0 || data.port > 65535)
         {
-            Console.WriteLine("Outside of valid port range!");
+            Debug.LogError("Outside of valid port range!");
             valid = false;
         }
 
         //Less than 1 player or server cap
         if(data.maxPlayers < 1 || data.maxPlayers > 32)
         {
-            Console.WriteLine("Outside of valid max player range!");
+            Debug.LogError("Outside of valid max player range!");
             valid = false;
         }
 
@@ -354,14 +357,14 @@ public class Preload : MonoBehaviour
         //Below 0 or above available map IDs
         if(data.mapID < 0 || data.mapID > 3)
         {
-            Console.WriteLine("Outside of valid the mapID range!");
+            Debug.LogError("Outside of valid the mapID range!");
             valid = false;
         }
 
         //Below 0 or above available gamemode IDs
         if(data.gamemodeID < 0 || data.gamemodeID > 3)
         {
-            Console.WriteLine("Outside of valid the gamemodeID range!");
+            Debug.LogError("Outside of valid the gamemodeID range!");
             valid = false;
         }
 
@@ -382,12 +385,14 @@ public class Preload : MonoBehaviour
         //Returner
         if (valid)
         {
+
             Console.WriteLine("No outstanding errors, using default values on certain values.");
             return true;
         }
         else
         {
             Console.WriteLine("Quitting the server.");
+            Debug.LogError("Quitting the server.");
             return false;
         }
 

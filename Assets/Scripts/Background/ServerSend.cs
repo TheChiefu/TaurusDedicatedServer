@@ -80,16 +80,18 @@ public class ServerSend
     public static void Welcome(int _toClient, ServerData serverData)
     {
 
+        Debug.Log("Sending serverdata to client: " + _toClient);
+
         //Give connecting player all necessary server data
         using (Packet _packet = new Packet((int)ServerPackets.welcome))
         {
             _packet.Write(_toClient);
             _packet.Write(serverData.name);
             _packet.Write(serverData.description);
-            _packet.Write(serverData.port);
             _packet.Write(serverData.maxPlayers);
             _packet.Write(serverData.mapID);
             _packet.Write(serverData.gamemodeID);
+            _packet.Write(serverData.MOTD);
 
             SendTCPData(_toClient, _packet);
         }

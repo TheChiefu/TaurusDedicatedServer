@@ -59,6 +59,8 @@ public class Client
 
             stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
 
+            Debug.Log("Sending welcome message");
+
             ServerSend.Welcome(id, Server.serverData);
         }
 
@@ -262,8 +264,11 @@ public class Client
 
         ThreadManager.ExecuteOnMainThread(() =>
         {
-            UnityEngine.Object.Destroy(player.gameObject);
-            player = null;
+            if(player != null)
+            {
+                UnityEngine.Object.Destroy(player.gameObject);
+                player = null;
+            }
         });
 
         tcp.Disconnect();

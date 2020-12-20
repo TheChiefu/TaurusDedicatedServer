@@ -97,7 +97,7 @@ public class ServerData
         Console.WriteLine("Name: " + this.name);
         Console.WriteLine("Description: " + this.description);
         Console.WriteLine("Port: " + this.port);
-        Console.WriteLine("Max Players: " + this.description);
+        Console.WriteLine("Max Players: " + this.maxPlayers);
         Console.WriteLine("Map ID: " + this.mapID);
         Console.WriteLine("Gamemode ID: " + this.gamemodeID);
         Console.WriteLine("MOTD: " + this.MOTD);
