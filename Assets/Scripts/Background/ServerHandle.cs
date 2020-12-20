@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,10 +25,10 @@ public class ServerHandle
         Server.clients[_fromClient].modelIndex = pd.modelIndex;
         Server.clients[_fromClient].materialIndex = pd.materialIndex;
 
-        Debug.Log($"{Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} connected successfully and is now player {_fromClient}.");
+        Console.WriteLine($"{Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} | \"{pd.username}\" connected successfully and is now player: {_fromClient}.");
         if (_fromClient != pd.id)
         {
-            Debug.Log($"Player \"{pd.username}\" (ID: {_fromClient}) has assumed the wrong client ID ({pd.id})!");
+            Console.WriteLine($"Player \"{pd.username}\" (ID: {_fromClient}) has assumed the wrong client ID ({pd.id})!");
         }
 
         // PREVIOUSLY - SEND PLAYER INTO GAME

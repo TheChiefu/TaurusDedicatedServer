@@ -59,8 +59,6 @@ public class Client
 
             stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
 
-            Debug.Log("Sending welcome message");
-
             ServerSend.Welcome(id, Server.serverData);
         }
 
@@ -77,7 +75,7 @@ public class Client
             }
             catch (Exception _ex)
             {
-                Debug.Log($"Error sending data to player {id} via TCP: {_ex}");
+                Console.WriteLine($"Error sending data to player {id} via TCP: {_ex}");
             }
         }
 
@@ -101,7 +99,7 @@ public class Client
             }
             catch (Exception _ex)
             {
-                Debug.Log($"Error receiving TCP data: {_ex}");
+                Console.WriteLine($"Error receiving TCP data: {_ex}");
                 Server.clients[id].Disconnect();
             }
         }
@@ -260,7 +258,7 @@ public class Client
     /// <summary>Disconnects the client and stops all network traffic.</summary>
     private void Disconnect()
     {
-        Debug.Log($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
+        Console.WriteLine($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
 
         ThreadManager.ExecuteOnMainThread(() =>
         {

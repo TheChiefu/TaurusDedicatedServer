@@ -392,7 +392,6 @@ public class Preload : MonoBehaviour
         else
         {
             Console.WriteLine("Quitting the server.");
-            Debug.LogError("Quitting the server.");
             return false;
         }
 

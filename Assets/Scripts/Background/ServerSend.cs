@@ -80,8 +80,6 @@ public class ServerSend
     public static void Welcome(int _toClient, ServerData serverData)
     {
 
-        Debug.Log("Sending serverdata to client: " + _toClient);
-
         //Give connecting player all necessary server data
         using (Packet _packet = new Packet((int)ServerPackets.welcome))
         {
@@ -324,8 +322,6 @@ public class ServerSend
         {
             _packet.Write(_id);
             _packet.Write(modelIndex);
-
-            Debug.Log(modelIndex);
 
             SendTCPDataToAll(_packet);
         }

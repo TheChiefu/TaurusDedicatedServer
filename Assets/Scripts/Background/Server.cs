@@ -89,14 +89,12 @@ public class Server
         TcpClient _client = tcpListener.EndAcceptTcpClient(_result);
         tcpListener.BeginAcceptTcpClient(TCPConnectCallback, null);
         Console.WriteLine($"Incoming connection from {_client.Client.RemoteEndPoint}...");
-        Debug.Log($"Incoming connection from {_client.Client.RemoteEndPoint}...");
 
         for (int i = 1; i <= serverData.maxPlayers; i++)
         {
-            Debug.Log("Connecting player: " + i);
+            Console.WriteLine("Connecting player: " + i);
             if (clients[i].tcp.socket == null)
             {
-                Debug.Log("Attempting to TCP connect player: " + i);
                 clients[i].tcp.Connect(_client);
                 return;
             }
