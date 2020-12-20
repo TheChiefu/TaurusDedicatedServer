@@ -2,6 +2,9 @@
 using System.Threading;
 using UnityEngine;
 
+/// <summary>
+/// Unity player class that handles in game behavior. NOT Server player handled values such as "PlayerData"
+/// </summary>
 public class Player : MonoBehaviour
 {
     
@@ -14,7 +17,6 @@ public class Player : MonoBehaviour
     public int teamID = -1;
 
     [Header("Primary Data")]
-    [SerializeField] private bool isBot = false;
     public float health = 0f;
     public float shield = 0f;
     [SerializeField] private float maxHealth = 100f;
@@ -71,6 +73,7 @@ public class Player : MonoBehaviour
         id = _id;
         username = _username;
         health = maxHealth;
+        shield = maxShield;
         modelIndex = _modelIndex;
         materialIndex = _materialIndex;
 
@@ -197,7 +200,7 @@ public class Player : MonoBehaviour
         if (itemAmount > 0)
         {
             itemAmount--;
-            NetworkManager.instance.InstantiateProjectile(shootOrigin).Initialize(_viewDirection, throwingForce, id);
+            LevelManager.instance.InstantiateProjectile(shootOrigin).Initialize(_viewDirection, throwingForce, id);
         }
     }
 
@@ -219,7 +222,7 @@ public class Player : MonoBehaviour
             controller.enabled = false;
 
             //Spawn at random position
-            Transform[] spawnPoints = NetworkManager.instance.spawnPoints;
+            Transform[] spawnPoints = LevelManager.instance.spawnPoints;
             int rand = Random.Range(0, spawnPoints.Length);
             transform.position = spawnPoints[rand].position;
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AI_Player : MonoBehaviour
 {
-    [SerializeField] private int Difficulty = 0; // 0 Lowest <---> 5 Highest
+    //[SerializeField] private int Difficulty = 0; // 0 Lowest <---> 5 Highest
     [SerializeField] private State currentState;
 
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -14,7 +15,8 @@ public static class Constants
     {
         Deathmatch,
         CaptureTheFlag,
-        KingOfTheHill
+        KingOfTheHill,
+        FreeForAll
     }
 
 
@@ -66,20 +68,40 @@ public class ServerData
     public string description { get; set; }
     public int port { get; set; }
     public int maxPlayers { get; set; }
+    public int mapID { get; set; }
+    public int gamemodeID { get; set; }
+    public string MOTD { get; set; }
+    public string[] Admins { get; set; }    //Initalized to NULL
 
+    /// <summary>
+    /// ServerData with all default values
+    /// </summary>
     public ServerData()
     {
         this.name = "Default Server";
         this.description = "Give me a description!";
         this.port = 2500;
         this.maxPlayers = 8;
+        this.mapID = 0;
+        this.gamemodeID = 0;
+        this.MOTD = "Welcome to the Server! Enjoy your stay.";
+        this.Admins = null;
     }
 
-    public ServerData (string name, string description, int port, int maxPlayers)
+    /// <summary>
+    /// Outputs a debug log that describes all the server information for sanity sake
+    /// </summary>
+    public void VerboseServerInfo()
     {
-        this.name = name;
-        this.description = description;
-        this.port = port;
-        this.maxPlayers = maxPlayers;
+        Console.WriteLine("-- Server Info --");
+        Console.WriteLine("Name: " + this.name);
+        Console.WriteLine("Description: " + this.description);
+        Console.WriteLine("Port: " + this.port);
+        Console.WriteLine("Max Players: " + this.maxPlayers);
+        Console.WriteLine("Map ID: " + this.mapID);
+        Console.WriteLine("Gamemode ID: " + this.gamemodeID);
+        Console.WriteLine("MOTD: " + this.MOTD);
+        Console.WriteLine("Version: " + Application.version);
+        Console.WriteLine("-----------------");
     }
 }

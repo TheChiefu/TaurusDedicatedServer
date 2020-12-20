@@ -1,9 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ServerHandle
 {
+    /// <summary>
+    /// Acknowledge client can connect to server
+    /// </summary>
+    /// <param name="_fromClient"></param>
+    /// <param name="_packet"></param>
     public static void WelcomeReceived(int _fromClient, Packet _packet)
     {
 
@@ -14,13 +20,22 @@ public class ServerHandle
             _packet.ReadInt()
             );
 
-        Debug.Log($"{Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} connected successfully and is now player {_fromClient}.");
+        Server.clients[_fromClient].id = pd.id;
+        Server.clients[_fromClient].username = pd.username;
+        Server.clients[_fromClient].modelIndex = pd.modelIndex;
+        Server.clients[_fromClient].materialIndex = pd.materialIndex;
+
+        Console.WriteLine($"{Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} | \"{pd.username}\" connected successfully and is now player: {_fromClient}.");
         if (_fromClient != pd.id)
         {
-            Debug.Log($"Player \"{pd.username}\" (ID: {_fromClient}) has assumed the wrong client ID ({pd.id})!");
+            Console.WriteLine($"Player \"{pd.username}\" (ID: {_fromClient}) has assumed the wrong client ID ({pd.id})!");
         }
 
-        Server.clients[_fromClient].SendIntoGame(pd);
+        // PREVIOUSLY - SEND PLAYER INTO GAME
+        // Server.clients[_fromClient].SendIntoGame(pd);
+
+        //Send Map and Gamemode data to connecting client
+        
     }
 
     public static void PlayerMovement(int _fromClient, Packet _packet)

@@ -3,16 +3,26 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
+/// <summary>
+/// Handles individual client data and sends changes to server.
+/// </summary>
 public class Client
 {
     public static int dataBufferSize = 4096;
 
     public int id;
-    public Player player;
+    public string username;
     public int modelIndex;
+    public int materialIndex;
+
+    public Player player;
     public TCP tcp;
     public UDP udp;
 
+    /// <summary>
+    /// Default Client constructor
+    /// </summary>
+    /// <param name="_clientId"></param>
     public Client(int _clientId)
     {
         id = _clientId;
@@ -65,7 +75,7 @@ public class Client
             }
             catch (Exception _ex)
             {
-                Debug.Log($"Error sending data to player {id} via TCP: {_ex}");
+                Console.WriteLine($"Error sending data to player {id} via TCP: {_ex}");
             }
         }
 
@@ -89,7 +99,7 @@ public class Client
             }
             catch (Exception _ex)
             {
-                Debug.Log($"Error receiving TCP data: {_ex}");
+                Console.WriteLine($"Error receiving TCP data: {_ex}");
                 Server.clients[id].Disconnect();
             }
         }
@@ -208,11 +218,10 @@ public class Client
     }
 
     /// <summary>Sends the client into the game and informs other clients of the new player.</summary>
-    /// <param name="_playerName">The username of the new player.</param>
-    public void SendIntoGame(PlayerData pd)
+    public void SendIntoGame()
     {
-        player = NetworkManager.instance.InstantiatePlayer();
-        player.Initialize(id, pd.username, pd.modelIndex, pd.materialIndex);
+        player = LevelManager.instance.InstantiatePlayer();
+        player.Initialize(id, username, modelIndex, materialIndex);
 
         // Send all players to the new player
         foreach (Client _client in Server.clients.Values)
@@ -221,7 +230,7 @@ public class Client
             {
                 if (_client.id != id)
                 {
-                    ServerSend.SpawnPlayer(id, _client.player, NetworkManager.instance.spawnPoints);
+                    ServerSend.SpawnPlayer(id, _client.player, LevelManager.instance.spawnPoints);
                 }
             }
         }
@@ -231,7 +240,7 @@ public class Client
         {
             if (_client.player != null)
             {
-                ServerSend.SpawnPlayer(_client.id, player, NetworkManager.instance.spawnPoints);
+                ServerSend.SpawnPlayer(_client.id, player, LevelManager.instance.spawnPoints);
             }
         }
 
@@ -249,12 +258,15 @@ public class Client
     /// <summary>Disconnects the client and stops all network traffic.</summary>
     private void Disconnect()
     {
-        Debug.Log($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
+        Console.WriteLine($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
 
         ThreadManager.ExecuteOnMainThread(() =>
         {
-            UnityEngine.Object.Destroy(player.gameObject);
-            player = null;
+            if(player != null)
+            {
+                UnityEngine.Object.Destroy(player.gameObject);
+                player = null;
+            }
         });
 
         tcp.Disconnect();

@@ -86,8 +86,10 @@ public class ServerSend
             _packet.Write(_toClient);
             _packet.Write(serverData.name);
             _packet.Write(serverData.description);
-            _packet.Write(serverData.port);
             _packet.Write(serverData.maxPlayers);
+            _packet.Write(serverData.mapID);
+            _packet.Write(serverData.gamemodeID);
+            _packet.Write(serverData.MOTD);
 
             SendTCPData(_toClient, _packet);
         }
@@ -320,8 +322,6 @@ public class ServerSend
         {
             _packet.Write(_id);
             _packet.Write(modelIndex);
-
-            Debug.Log(modelIndex);
 
             SendTCPDataToAll(_packet);
         }
